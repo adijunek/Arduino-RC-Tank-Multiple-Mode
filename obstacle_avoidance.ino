@@ -93,6 +93,7 @@ void lookArround(int maxStep){
 }
 
 void moveForward(){
+    resetAvoidance();
     rMotor.setSpeed(255);
     lMotor.setSpeed(255);
 
@@ -109,6 +110,7 @@ void moveForward(){
 }
 
 void resetAvoidance(){
+    maxStep = MAXSTEP;
     obstacle = 0;
     countLeft = 0;
     countRight = 0;
