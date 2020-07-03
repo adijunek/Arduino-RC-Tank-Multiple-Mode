@@ -5,9 +5,9 @@
     
     A0    : CH01 :Throttle
     A1    : CH02 : Steer
-    A2    : CH03 : Mode Switch
-    A3    : CH04 : Led Control Switch
-    A5    : relay
+    A2    : CH03 : Mode Switchinf Control (]
+    A3    : CH04 : Front Led Control Switch
+    A5    : relay : Front Led relay
 */
 
 /* Motors */
@@ -127,9 +127,6 @@ void switchLed(int rcLed){
 }
 
 void mStop() {
-  Serial.print(" signal lost ");
-  Serial.println();
-
   rMotor.run(RELEASE);
   lMotor.run(RELEASE);
 }

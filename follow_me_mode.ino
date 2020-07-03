@@ -8,7 +8,6 @@ void followMode(){
   Serial.println(distance);
   
   if(distance <= 100 && distance > 30){
-    // move forward
 
     rMotor.setSpeed(255);
     lMotor.setSpeed(255);    
@@ -20,9 +19,10 @@ void followMode(){
     //stop
     mStop();
   
-  }else if(distance <=20 && distance >0){
+  }else if(distance <=20 ){
     rMotor.setSpeed(255);
     lMotor.setSpeed(255);
+    
     rMotor.run(BACKWARD);
     lMotor.run(BACKWARD);
   

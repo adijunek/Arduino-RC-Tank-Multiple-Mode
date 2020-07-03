@@ -1,5 +1,5 @@
-#define MIN_DISTANCE 25 // distance to obstacle that triger avoidance behaviour 
-#define MAXSTEP 20 // initial angle for look left and look right
+#define MIN_DISTANCE 20 // distance (cm) to obstacle that triger avoidance behaviour 
+#define MAXSTEP 30 // initial angle for look left and look right
 int maxStep = MAXSTEP; 
 int addStep = 10; // incrementing angle if the last 'look arround' failed 
 
