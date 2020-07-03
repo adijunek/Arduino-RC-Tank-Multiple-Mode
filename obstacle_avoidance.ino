@@ -1,6 +1,6 @@
 #define MIN_DISTANCE 25 // distance to obstacle that triger avoidance behaviour 
-
-int maxStep = 20; // initial angle for look left and look right
+#define MAXSTEP 20 // initial angle for look left and look right
+int maxStep = MAXSTEP; 
 int addStep = 10; // incrementing angle if the last 'look arround' failed 
 
 int obstacle = 0;
@@ -16,6 +16,7 @@ void avoidanceMode(){
   if(obstacle == 1){
     lookArround(maxStep);
   }else{
+     maxStep = MAXSTEP; 
      moveForward();
   }  
 }
@@ -62,7 +63,6 @@ void lookArround(int maxStep){
        * 
        */
       if(goLookLeft == 0 && goLookRight == 0){
-        digitalWrite(relay, LOW);
           if(rDistance >= lDistance && rDistance  > MIN_DISTANCE){
               obstacle = 0;
               goLookLeft = 1;    
@@ -83,8 +83,10 @@ void lookArround(int maxStep){
 
               
           }else{
-              
+              //digitalWrite(relay, LOW);
+              goLookLeft = 1;
               maxStep+=addStep;
+              obstacle = 1;
           }
       }                  
 

@@ -1,6 +1,3 @@
-int initSpeed = 0;
-int maxSpeed = 255;
-
 
 void followMode(){
   

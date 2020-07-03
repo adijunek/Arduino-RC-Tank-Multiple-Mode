@@ -7,7 +7,7 @@
     A1    : CH02 : Steer
     A2    : CH03 : Mode Switch
     A3    : CH04 : Led Control Switch
-    A4    : relay
+    A5    : relay
 */
 
 /* Motors */
@@ -85,8 +85,8 @@ void loop() {
      * rcMode PWM output: 1000, 1500 , 2000 
      */
      
-    // failsafe
-    if (rcMode == 1) { // signal lost
+    // failsafe (rc signal lost)
+    if (rcMode == 1) { 
       mStop();
       resetAvoidance(); // to reset Avoidance Mode's variables 
     }
