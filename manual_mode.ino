@@ -1,3 +1,8 @@
+/* A simple Manual Steering Mode
+ *  Juni Adi, July 6th 2020
+ * 
+ */
+
 void manualMode(int rcThrottle, int rcSteer) {
   
   Serial.println("Manual");

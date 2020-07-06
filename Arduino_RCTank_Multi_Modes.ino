@@ -1,11 +1,13 @@
-/* Juni Adi 06/29/2020
+/* Main Program
+   Juni Adi 06/29/2020
+ 
     Pin Configuration:
     9    : Sonar TRIG
     10   : Sonar Ping/RX
     
     A0    : CH01 :Throttle
     A1    : CH02 : Steer
-    A2    : CH03 : Mode Switchinf Control (]
+    A2    : CH03 : Mode  Control Switch
     A3    : CH04 : Front Led Control Switch
     A5    : relay : Front Led relay
 */

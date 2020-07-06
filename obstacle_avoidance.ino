@@ -1,11 +1,28 @@
+/* Obstacle Avoidance Alogarithm
+ *  Juni Adi, July 6th 2020
+ * 
+ * When the vehicle detects an obstacle in range (MIN_DISTANCE), it will:
+ * 1. Stop
+ * 2. Rotate left (with predefined 'angle': DEFAULT_TURNTIME), then measure the distance 
+ * 3. Rotate right (twice as much angle as the left rotate), then measure the distance
+ * 4. Move forward based on which distance is bigger (left or right)
+ * 
+ * Since we do not use stepper motors, we use time (millis) to control  
+ * the amount of rotation (angle) when it turn left/right to find the bigger distance 
+ * 
+ * If one 'look-around' loop failed i.e the bigger distance is less than MIN_DISTANCE,
+ * the loop will re-iterate with adding e predefined amount of time: addTime (to produce a bigger angle)
+ */
+
+
 #define MIN_DISTANCE 20 // distance (cm) to obstacle that triger avoidance behaviour 
-#define MAXSTEP 30 // initial angle for look left and look right
-int maxStep = MAXSTEP; 
-int addStep = 10; // incrementing angle if the last 'look arround' failed 
+#define DEFAULT_TURNTIME 50 // how many milliseconds is a turn procces take time 
+                            // i.e how wide is the angle of turn
+int turnTime = DEFAULT_TURNTIME; 
+int addTime = 10; // adding time (millisecond)/incrementing angle if the last 'look arround' failed 
 
 int obstacle = 0;
-int countLeft = 0;
-int countRight = 0;
+unsigned long timeLapse = 0;
 int goLookLeft = 1;
 int goLookRight = 0;
 
@@ -14,78 +31,88 @@ int lDistance;
 
 void avoidanceMode(){
   if(obstacle == 1){
-    lookArround(maxStep);
+  
+    lookArround(turnTime);
+
   }else{
-     maxStep = MAXSTEP; 
+
      moveForward();
   }  
 }
 
-void lookArround(int maxStep){
+void lookArround(int turnTime){
 
       //rotate left first 
       if(goLookLeft == 1){
-          if(countLeft <= maxStep){ // look left
-            rMotor.setSpeed(255);
-            lMotor.setSpeed(255);
-            rMotor.run(FORWARD);
-            lMotor.run(BACKWARD);
-            countLeft++;
+          if(timeLapse == 0){
+            timeLapse = millis();
           }else{
-            mStop();
-            countLeft=0;      
-            goLookLeft=0;
-            goLookRight=1;
-            lDistance=readPing();
-          }        
+              if(millis() - timeLapse <= turnTime ){
+                  mTurnLeft();             
+              }else{
+                  mStop();
+                  timeLapse = 0;
+                  goLookLeft=0;
+                  goLookRight=1;
+                  lDistance=readPing();                
+              }
+          }
+          
       }
 
       //than rotate right
       if(goLookRight == 1){
-          if(countRight <= (2*maxStep)){ //look right
-            rMotor.setSpeed(255);
-            lMotor.setSpeed(255);
-      
-            rMotor.run(BACKWARD);
-            lMotor.run(FORWARD);
-            countRight++;
-            
+          if(timeLapse == 0){
+            timeLapse = millis();
           }else{
-            mStop();
-            countRight = 0;            
-            goLookRight=0;
-            rDistance=readPing();
+              if(millis() - timeLapse <= turnTime ){
+                  mTurnRight();             
+              }else{
+                  mStop();
+                  timeLapse = 0;
+                  goLookRight=0;
+                  lDistance=readPing();
+              }
           }
-        
+   
       }
 
-      /* decision based on left distance and right distance
+      /* decision is made based on left distance and right distance
        * 
        */
       if(goLookLeft == 0 && goLookRight == 0){
+          // if right distance is bigger
+          // immediately move forward as the vehicle is now in the right radian position
           if(rDistance >= lDistance && rDistance  > MIN_DISTANCE){
               obstacle = 0;
               goLookLeft = 1;    
-          }else if(lDistance > rDistance && lDistance > MIN_DISTANCE){
+          }
+          // if left distance is bigger
+          // go back to 'left' radian position (rotate left with twice bigger time)
+          // and immediately move forward
+          else if(lDistance > rDistance && lDistance > MIN_DISTANCE){
               goLookLeft = 0;
 
-              if(countLeft <= (2*maxStep)){
-                  rMotor.setSpeed(255);
-                  lMotor.setSpeed(255);
-                  rMotor.run(FORWARD);
-                  lMotor.run(BACKWARD);
-                  countLeft++;
+              if(timeLapse == 0){
+                  timeLapse = millis();
               }else{
-                  mStop();
-                  obstacle = 0;
-                  goLookLeft = 1;
+                  if(millis() - timeLapse <= (2*turnTime)){
+                      mTurnLeft();
+                  }else{
+                      mStop();
+                      timeLapse = 0;
+                      obstacle = 0;
+                      goLookLeft = 1;                    
+                  }
               }
-
               
-          }else{
+          }
+          // the look-arround is failed
+          // start over with wider angle
+          else{
               //digitalWrite(relay, LOW);
               goLookLeft = 1;
-              maxStep+=addStep;
+              turnTime+=addTime;
               obstacle = 1;
           }
       }                  
@@ -93,7 +120,7 @@ void lookArround(int maxStep){
 }
 
 void moveForward(){
-    resetAvoidance();
+    resetAvoidance(); //just to make sure 
     rMotor.setSpeed(255);
     lMotor.setSpeed(255);
 
@@ -109,11 +136,30 @@ void moveForward(){
   
 }
 
+void mTurnLeft(){
+    rMotor.setSpeed(255);
+    lMotor.setSpeed(255);
+    rMotor.run(FORWARD);
+    lMotor.run(BACKWARD);   
+}
+
+void mTurnRight(){
+    rMotor.setSpeed(255);
+    lMotor.setSpeed(255);
+    rMotor.run(BACKWARD);
+    lMotor.run(FORWARD);   
+}
+
+/*
+ * Reset Avoidance variable to default 
+ * in case user switch mode in the middle of look-around proccess
+ * so that when he gets back to Avoidance Mode the look-around loop start from it's default value
+ * 
+ */
 void resetAvoidance(){
-    maxStep = MAXSTEP;
+    turnTime = DEFAULT_TURNTIME;
     obstacle = 0;
-    countLeft = 0;
-    countRight = 0;
+    timeLapse  = 0;
     goLookLeft = 1;
     goLookRight = 0;
 }

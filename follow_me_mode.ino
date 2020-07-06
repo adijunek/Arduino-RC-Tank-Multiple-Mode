@@ -1,4 +1,12 @@
 
+/* Object Following Simple Alogarithm 
+ * Juni Adi Juni Adi 06/29/2020
+ */
+ 
+int forwardDistance = 100;  // maximum distance to follow (move forward)
+int stopDistance = 30;      // maximum distance to stop
+int backwardDistance = 20;  // maximum distance to backup (move backward)
+
 void followMode(){
   
   Serial.println("Follow");
@@ -7,7 +15,7 @@ void followMode(){
 
   Serial.println(distance);
   
-  if(distance <= 100 && distance > 30){
+  if(distance <= forwardDistance && distance > stopDistance){
 
     rMotor.setSpeed(255);
     lMotor.setSpeed(255);    
@@ -15,11 +23,11 @@ void followMode(){
     rMotor.run(FORWARD);
     lMotor.run(FORWARD);
     
-  }else if(distance <= 30 && distance > 20){
+  }else if(stopDistance <= 30 && distance > backwardDistance){
     //stop
     mStop();
   
-  }else if(distance <=20 ){
+  }else if(distance <= backwardDistance ){
     rMotor.setSpeed(255);
     lMotor.setSpeed(255);
     
